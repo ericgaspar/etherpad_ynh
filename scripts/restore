@@ -75,6 +75,15 @@ chown -R $app: $final_path
 chmod 600 $final_path/credentials.json
 
 #=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=12
+
+ynh_install_app_dependencies $pkg_dependencies
+
+ynh_install_nodejs --nodejs_version=$nodejs_version
+
+#=================================================
 # RESTORE THE POSTQRESQL DATABASE
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=2
@@ -103,7 +112,7 @@ yunohost service add $app --description "Etherpad-lite, the collaborative editor
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=8
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log" --line_match="Your Etherpad version is" --timeout="120"
 
 #=================================================
 # GENERIC FINALIZATION
